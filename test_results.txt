@@ -1,0 +1,195 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.3, pluggy-1.6.0 -- /home/omi/Desktop/Codes/translate/env/bin/python
+cachedir: .pytest_cache
+rootdir: /home/omi/Desktop/Codes/translate
+plugins: anyio-3.7.1, asyncio-0.21.1
+asyncio: mode=Mode.STRICT
+collecting ... collected 41 items
+
+tests.py::TestHealthEndpoint::test_health_check PASSED                   [  2%]
+tests.py::TestHealthEndpoint::test_health_check_response_structure PASSED [  4%]
+tests.py::TestLanguagesEndpoint::test_get_languages PASSED               [  7%]
+tests.py::TestLanguagesEndpoint::test_supported_languages_count PASSED   [  9%]
+tests.py::TestLanguagesEndpoint::test_languages_response_structure PASSED [ 12%]
+tests.py::TestBasicTranslation::test_translate_valid_request PASSED      [ 14%]
+tests.py::TestBasicTranslation::test_translate_response_structure PASSED [ 17%]
+tests.py::TestBasicTranslation::test_translate_to_various_languages PASSED [ 19%]
+tests.py::TestBasicTranslation::test_translate_case_insensitive_language PASSED [ 21%]
+tests.py::TestBasicTranslation::test_translate_special_characters PASSED [ 24%]
+tests.py::TestBasicTranslation::test_translate_numbers PASSED            [ 26%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_separated_messages PASSED [ 29%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_batch_response_structure PASSED [ 31%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_with_empty_phrases PASSED [ 34%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_with_whitespace PASSED [ 36%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_single_phrase PASSED [ 39%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_batch_caching PASSED [ 41%]
+tests.py::TestSemicolonSeparatedTranslations::test_semicolon_multiple_languages PASSED [ 43%]
+tests.py::TestCachingBehavior::test_single_message_caching PASSED        [ 46%]
+tests.py::TestCachingBehavior::test_different_languages_separate_cache PASSED [ 48%]
+tests.py::TestErrorHandling::test_empty_message PASSED                   [ 51%]
+tests.py::TestErrorHandling::test_whitespace_only_message PASSED         [ 53%]
+tests.py::TestErrorHandling::test_invalid_language PASSED                [ 56%]
+tests.py::TestErrorHandling::test_message_too_long PASSED                [ 58%]
+tests.py::TestErrorHandling::test_missing_message_field PASSED           [ 60%]
+tests.py::TestErrorHandling::test_missing_language_field PASSED          [ 63%]
+tests.py::TestErrorHandling::test_invalid_request_format PASSED          [ 65%]
+tests.py::TestStatsEndpoint::test_get_stats FAILED                       [ 68%]
+tests.py::TestStatsEndpoint::test_stats_structure PASSED                 [ 70%]
+tests.py::TestStatsEndpoint::test_stats_shows_translations FAILED        [ 73%]
+tests.py::TestCacheManagement::test_clear_cache PASSED                   [ 75%]
+tests.py::TestCacheManagement::test_clear_cache_response_structure PASSED [ 78%]
+tests.py::TestEdgeCases::test_very_short_message PASSED                  [ 80%]
+tests.py::TestEdgeCases::test_message_with_multiple_spaces PASSED        [ 82%]
+tests.py::TestEdgeCases::test_message_with_newlines PASSED               [ 85%]
+tests.py::TestEdgeCases::test_message_with_tabs PASSED                   [ 87%]
+tests.py::TestEdgeCases::test_unicode_message PASSED                     [ 90%]
+tests.py::TestEdgeCases::test_mixed_language_message PASSED              [ 92%]
+tests.py::TestEdgeCases::test_only_semicolons PASSED                     [ 95%]
+tests.py::TestEdgeCases::test_semicolon_at_start PASSED                  [ 97%]
+tests.py::TestEdgeCases::test_semicolon_at_end PASSED                    [100%]
+
+=================================== FAILURES ===================================
+_______________________ TestStatsEndpoint.test_get_stats _______________________
+tests.py:390: in test_get_stats
+    assert response.status_code == 200
+E   assert 500 == 200
+E    +  where 500 = <Response [500 Internal Server Error]>.status_code
+----------------------------- Captured stderr call -----------------------------
+2026-04-16 15:05:15 - main - INFO - REQUEST - Method: POST | Endpoint: /translate | IP: testclient | Data: {"message": "StatsTest", "language": "hi"}
+2026-04-16 15:05:16 - main - INFO - RESPONSE - Endpoint: /translate | Status: 200 | Data: {"status": true, "code": 200, "message": "Translation successful", "data": {"converted_text": "\u0906\u0901\u0915\u0921\u093c\u0947 \u092a\u0930\u0940\u0915\u094d\u0937\u0923", "language": "hi", "cached": false, "library": "deep-translator"}}
+2026-04-16 15:05:16 - main - INFO - REQUEST - Method: GET | Endpoint: /stats | IP: testclient | Data: {}
+2026-04-16 15:05:16 - main - ERROR - ERROR - Error fetching stats: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/home/omi/Desktop/Codes/translate/main.py", line 394, in get_stats
+    log_response(logger, "/stats", 200, response)
+  File "/home/omi/Desktop/Codes/translate/utils/logger.py", line 57, in log_response
+    f"RESPONSE - Endpoint: {endpoint} | Status: {status_code} | Data: {json.dumps(response)}"
+                                                                       ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+2026-04-16 15:05:16 - main - WARNING - HTTP exception: 500 - Internal server error
+------------------------------ Captured log call -------------------------------
+INFO     main:logger.py:47 REQUEST - Method: POST | Endpoint: /translate | IP: testclient | Data: {"message": "StatsTest", "language": "hi"}
+INFO     main:logger.py:56 RESPONSE - Endpoint: /translate | Status: 200 | Data: {"status": true, "code": 200, "message": "Translation successful", "data": {"converted_text": "\u0906\u0901\u0915\u0921\u093c\u0947 \u092a\u0930\u0940\u0915\u094d\u0937\u0923", "language": "hi", "cached": false, "library": "deep-translator"}}
+INFO     main:logger.py:47 REQUEST - Method: GET | Endpoint: /stats | IP: testclient | Data: {}
+ERROR    main:logger.py:66 ERROR - Error fetching stats: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/home/omi/Desktop/Codes/translate/main.py", line 394, in get_stats
+    log_response(logger, "/stats", 200, response)
+  File "/home/omi/Desktop/Codes/translate/utils/logger.py", line 57, in log_response
+    f"RESPONSE - Endpoint: {endpoint} | Status: {status_code} | Data: {json.dumps(response)}"
+                                                                       ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+WARNING  main:main.py:570 HTTP exception: 500 - Internal server error
+_______________ TestStatsEndpoint.test_stats_shows_translations ________________
+tests.py:416: in test_stats_shows_translations
+    assert data["data"]["total_translations"] >= 1
+E   TypeError: 'NoneType' object is not subscriptable
+----------------------------- Captured stderr call -----------------------------
+2026-04-16 15:05:16 - main - INFO - REQUEST - Method: POST | Endpoint: /translate | IP: testclient | Data: {"message": "CountTest", "language": "hi"}
+2026-04-16 15:05:19 - main - INFO - RESPONSE - Endpoint: /translate | Status: 200 | Data: {"status": true, "code": 200, "message": "Translation successful", "data": {"converted_text": "\u0915\u093e\u0909\u0902\u091f\u091f\u0947\u0938\u094d\u091f", "language": "hi", "cached": false, "library": "deep-translator"}}
+2026-04-16 15:05:19 - main - INFO - REQUEST - Method: GET | Endpoint: /stats | IP: testclient | Data: {}
+2026-04-16 15:05:19 - main - ERROR - ERROR - Error fetching stats: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/home/omi/Desktop/Codes/translate/main.py", line 394, in get_stats
+    log_response(logger, "/stats", 200, response)
+  File "/home/omi/Desktop/Codes/translate/utils/logger.py", line 57, in log_response
+    f"RESPONSE - Endpoint: {endpoint} | Status: {status_code} | Data: {json.dumps(response)}"
+                                                                       ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+2026-04-16 15:05:19 - main - WARNING - HTTP exception: 500 - Internal server error
+------------------------------ Captured log call -------------------------------
+INFO     main:logger.py:47 REQUEST - Method: POST | Endpoint: /translate | IP: testclient | Data: {"message": "CountTest", "language": "hi"}
+INFO     main:logger.py:56 RESPONSE - Endpoint: /translate | Status: 200 | Data: {"status": true, "code": 200, "message": "Translation successful", "data": {"converted_text": "\u0915\u093e\u0909\u0902\u091f\u091f\u0947\u0938\u094d\u091f", "language": "hi", "cached": false, "library": "deep-translator"}}
+INFO     main:logger.py:47 REQUEST - Method: GET | Endpoint: /stats | IP: testclient | Data: {}
+ERROR    main:logger.py:66 ERROR - Error fetching stats: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/home/omi/Desktop/Codes/translate/main.py", line 394, in get_stats
+    log_response(logger, "/stats", 200, response)
+  File "/home/omi/Desktop/Codes/translate/utils/logger.py", line 57, in log_response
+    f"RESPONSE - Endpoint: {endpoint} | Status: {status_code} | Data: {json.dumps(response)}"
+                                                                       ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+WARNING  main:main.py:570 HTTP exception: 500 - Internal server error
+=============================== warnings summary ===============================
+env/lib/python3.12/site-packages/pydantic/_internal/_config.py:268
+env/lib/python3.12/site-packages/pydantic/_internal/_config.py:268
+  /home/omi/Desktop/Codes/translate/env/lib/python3.12/site-packages/pydantic/_internal/_config.py:268: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+    warnings.warn(DEPRECATION_MESSAGE, DeprecationWarning)
+
+main.py:620
+  /home/omi/Desktop/Codes/translate/main.py:620: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+env/lib/python3.12/site-packages/fastapi/applications.py:4547
+env/lib/python3.12/site-packages/fastapi/applications.py:4547
+  /home/omi/Desktop/Codes/translate/env/lib/python3.12/site-packages/fastapi/applications.py:4547: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+main.py:629
+  /home/omi/Desktop/Codes/translate/main.py:629: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests.py::TestStatsEndpoint::test_get_stats - assert 500 == 200
+FAILED tests.py::TestStatsEndpoint::test_stats_shows_translations - TypeError...
+================== 2 failed, 39 passed, 6 warnings in 18.30s ===================

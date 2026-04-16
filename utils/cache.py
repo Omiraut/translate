@@ -79,7 +79,7 @@ class InMemoryCache:
 
     def get_stats(self) -> dict:
         """
-        Get cache statistics
+        Get cache statistics with JSON-serializable data
         """
         self.cleanup_expired()
         return {
@@ -88,7 +88,8 @@ class InMemoryCache:
                 {
                     "message": item["message"],
                     "language": item["language"],
-                    "cached_at": item["expiry"] - self.ttl,
+                    "cached_at": (item["expiry"] - self.ttl).isoformat(),
+                    "expires_at": item["expiry"].isoformat(),
                 }
                 for item in self.cache.values()
             ],

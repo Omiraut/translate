@@ -307,9 +307,14 @@ async def list_languages(request: Request):
 async def translate(request_data: TranslationRequest, request: Request):
     """
     Translate text to target language
+    
+    **Supports both single and batch translations:**
+    - Single message: Translates a single text
+    - Batch mode: Separate messages with semicolon (;) to translate multiple phrases
+      Example: "Hello;Good morning;Welcome" will translate each phrase separately
 
     **Request Body:**
-    - message: Text to translate
+    - message: Text to translate (can contain semicolons for multiple phrases)
     - language: Target language code (e.g., 'hi', 'mr', 'gu')
 
     **Response:**
@@ -317,6 +322,8 @@ async def translate(request_data: TranslationRequest, request: Request):
     - code: HTTP status code
     - message: Status message
     - data: Translated text and metadata
+      - For batch mode: Array of objects with original, translated, and cached fields
+      - For single mode: String with translated text
     """
     client_ip = get_client_ip(request)
     request_payload = {"message": request_data.message, "language": request_data.language}
